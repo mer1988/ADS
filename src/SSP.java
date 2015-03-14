@@ -1,17 +1,14 @@
 import java.util.Map;
 
 
+
+
 public class SSP {
 	
-	private static FibonacciHeap heap;
-	private static Graph graph;
-	
 	public static void main(String Args[]){
-		//initialize Fib Heap
-		heap = new FibonacciHeap();
 		
 		//Initialize Graph From File
-		graph = new Graph();
+		Graph graph = new Graph();
 				
 		try{
 			graph.load("test/graph.txt");
@@ -35,6 +32,8 @@ public class SSP {
 			System.exit(0);
 		}
 		
+		Dijkstra(graph);
+		
 		System.out.println(graph.toString());
 		
 		
@@ -42,12 +41,30 @@ public class SSP {
 	}
 	
 	
-	public static float Dijkstra (){
+	public static float Dijkstra (Graph g){
+		FibonacciHeap heap = new FibonacciHeap();
+		Integer[] dist = new Integer[g.getNumVetices()];
 		
-		for(int i=0;i<graph.getNumVetices();i++){
-				
+		for(int i=0;i<g.getNumVetices();i++){
+			Integer nodeLabel = new Integer(i);
+			double distance = (nodeLabel != g.getSource())? Double.MAX_VALUE : 0.0;
+			dist[i] = (int) distance;
+			heap.enqueue(new Integer(i), distance);
 		}
 		
+		while(!heap.isEmpty()){
+			Integer u = heap.dequeueMin();
+			for (Map.Entry<Integer, Integer> ady: g.getAdyacents(u)){
+				Integer adyVertex = ady.getKey();
+			    Integer distance = ady.getValue();
+			    int alt = dist[u] + distance;
+			    if(alt < dist[adyVertex]){
+			    	dist[adyVertex] = alt;
+			    	heap.decreaseKey(n, priority);
+			    }
+			}
+			
+		}
 		return 0 ;
 	}
 	

@@ -16,7 +16,6 @@ public class Graph{
 	private Map<Integer, Vertex> 	    vertices;
 	private int							numVert, numEdg;
  	
-	//Empty Graph
 	public Graph (){
 		vertices = new HashMap<Integer, Vertex>();
 		source = null;
@@ -25,7 +24,6 @@ public class Graph{
 		numEdg = 0;
 	}
 	
-	//Load graph from file
 	public void load (String path) throws IOException{
 	
 		FileInputStream fstream = new FileInputStream(path);
@@ -88,13 +86,10 @@ public class Graph{
 			throw new Exception("destination vertex not found!");
 		}
 	}
-	
-	
-	
+		
 	public Map<Integer, Vertex> getVertices() {
 		return vertices;
 	}
-
 
 	public String toString(){
 		String str = "";
@@ -113,7 +108,9 @@ public class Graph{
 		return str;
 	}
 	
-	
+	public Set<Entry<Integer, Integer>>  getAdyacents(Integer vertex){
+		return vertices.get(vertex).getAdyasents();
+	}
 	
 	private class Vertex{
 		
