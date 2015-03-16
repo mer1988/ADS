@@ -11,7 +11,7 @@ public class SSP {
 		Graph graph = new Graph();
 				
 		try{
-			graph.load("test/input_1000_50_part1.txt");
+			graph.load("test/new_input_5000_1_part1.txt");
 		}catch(Exception ex){
 			ex.printStackTrace();
 //			System.out.println("Problem loading file!");
@@ -27,14 +27,14 @@ public class SSP {
 		}
 		
 		try{
-			graph.setDest(new Integer("999"));
+			graph.setDest(new Integer("4999"));
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			System.exit(1);
 		}
 		
-				
-		System.out.println(graph.toString());
+		System.out.println("Loaded graph");	
+		//System.out.println(graph.toString());
 		
 		System.out.print("Shortest path cost: "+Dijkstra(graph));
 
@@ -43,6 +43,8 @@ public class SSP {
 	
 	
 	public static float Dijkstra (Graph g){
+		
+		
 		
 		FibonacciHeap heap = new FibonacciHeap();
 		Integer[] dist = new Integer[g.getNumVetices()];
