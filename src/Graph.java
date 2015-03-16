@@ -41,15 +41,14 @@ public class Graph{
 		for (int i = 0; i < numVert; i++) {
 			vertices.put((Integer) i, new Vertex(i));
 		}
-		
 		while ((strLine = br.readLine()) != null)   {
 			String[] edge =  strLine.split(" ");
 			Vertex v1 = vertices.get(new Integer(edge[0]));
 			Vertex v2 = vertices.get(new Integer(edge[1]));
 			int w = Integer.parseInt(edge[2]);
 			
-			v1.addAdyasentVertex(v2.label, w);
-			v2.addAdyasentVertex(v1.label, w);
+			v1.addAdyasentVertex(v2.getLabel(), w);
+			v2.addAdyasentVertex(v1.getLabel(), w);
 			
 		}
 
@@ -111,6 +110,7 @@ public class Graph{
 	public Set<Entry<Integer, Integer>>  getAdyacents(Integer vertex){
 		return vertices.get(vertex).getAdyasents();
 	}
+	
 	
 	private class Vertex{
 		
