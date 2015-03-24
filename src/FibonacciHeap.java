@@ -48,7 +48,7 @@ public class FibonacciHeap {
 
 
    
-    public Integer dequeueMin() {
+    public Integer extractMin() {
         
 
         size -= 1;;
@@ -112,7 +112,7 @@ public class FibonacciHeap {
                 min.child = mergeLists(min.child, max);
                 
                 max.parent = min;
-                max.marked = false;
+                max.childCut = false;
                 min.degree += 1;               
                 n = min;
             }
@@ -126,7 +126,7 @@ public class FibonacciHeap {
   
     public void delete(Node entry) throws Exception{  
         decreaseKey(entry.getElem(), Integer.MIN_VALUE);
-        dequeueMin();
+        extractMin();
     }
 
    
@@ -171,7 +171,7 @@ public class FibonacciHeap {
    
     private void cutNode(Node n) {
         
-        n.marked = false;
+        n.childCut = false;
         
         if (n.parent == null) return;
 
@@ -198,10 +198,10 @@ public class FibonacciHeap {
         n.prev = n.next = n;
         min = mergeLists(min, n);
         
-        if (n.parent.marked)
+        if (n.parent.childCut)
             cutNode(n.parent);
         else
-            n.parent.marked = true;
+            n.parent.childCut = true;
         
         n.parent = null;
     }
@@ -213,7 +213,7 @@ public class FibonacciHeap {
     
     private class Node {
         private int     	degree = 0;       
-        private boolean 	marked = false; 
+        private boolean 	childCut = false; 
         private Node 		next, prev, parent, child;  
         private Integer     elem;     
         private int 		priority; 

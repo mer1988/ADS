@@ -1,3 +1,4 @@
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -13,10 +14,8 @@ public class SSP {
 		try{
 			graph.load("test/new_input_5000_1_part1.txt");
 		}catch(Exception ex){
-			ex.printStackTrace();
-//			System.out.println("Problem loading file!");
-//			System.out.println(ex.getMessage());
-//			System.exit(1);
+			System.out.println(ex.getMessage());
+			System.exit(1);
 		}
 		
 		try{
@@ -33,52 +32,60 @@ public class SSP {
 			System.exit(1);
 		}
 		
-		System.out.println("Loaded graph");	
-		//System.out.println(graph.toString());
+		Map.Entry<Integer, Integer[]> e = Dijkstra(graph);
 		
-		System.out.print("Shortest path cost: "+Dijkstra(graph));
+		Integer[] prev = e.getValue();
+		Integer Inx = prev[graph.getDest()];
+		String path = graph.getDest() + "";
+		
+		while(Inx != -1){
+			path = Inx + " "+ path;
+			Inx = prev[Inx];
+		}
+		
+		System.out.println(e.getKey());
+		System.out.print(path);
 
 		
 	}
 	
 	
-	public static float Dijkstra (Graph g){
-		
-		
+	public static Map.Entry<Integer, Integer[]> Dijkstra (Graph g){		
 		
 		FibonacciHeap heap = new FibonacciHeap();
 		Integer[] dist = new Integer[g.getNumVetices()];
+		Integer[] prev = new Integer[g.getNumVetices()];
+		
 		
 		for(int i=0;i<g.getNumVetices();i++){
 			Integer nodeLabel = new Integer(i);
-			if (!nodeLabel.equals(g.getSource()))
+			if (!nodeLabel.equals(g.getSource())){
 				dist[i] = Integer.MAX_VALUE;
-			else
+				
+			}else
 				dist[i] = 0;
+			prev[i] = -1;
 			heap.enqueue(nodeLabel, dist[i]);
 		}
 		
-		//for(int i=0; i<g.getNumVetices();i++)			
-			//System.out.println("dis("+i+")="+dist[i]);
-		
 		while(!heap.isEmpty()){
-			Integer u = heap.dequeueMin();
-			//System.out.println("Dequeue node: "+u);
+			Integer u = heap.extractMin();
+			
 			for (Map.Entry<Integer, Integer> ady: g.getAdyacents(u)){
 				Integer adyVertex = ady.getKey();
 			    Integer distance = ady.getValue();
 			    int alt = dist[u] + distance;
 			    if(alt < dist[adyVertex]){
-			    	//System.out.println("Update dist from source to "+adyVertex);
 			    	dist[adyVertex] = alt;
+			    	prev[adyVertex] = u;
 			    	heap.decreaseKey(adyVertex, alt);
 			    }
 			}
 			
 		}
-		//for(int i=0; i<g.getNumVetices();i++)			
-			//System.out.println("dis("+i+")="+dist[i]);
-		return dist[g.getDest()] ;
+		
+		Map.Entry<Integer,Integer[]> result = new AbstractMap.SimpleEntry<Integer, Integer[]>(dist[g.getDest()], prev);
+		return result;
 	}
 	
 	
