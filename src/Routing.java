@@ -33,7 +33,7 @@ public class Routing {
 		try{
 			trie.load("test/ip.txt");
 		}catch(Exception e){
-			e.getMessage();
+			System.out.println(e.getMessage());
 			System.exit(1);
 		}
 	}

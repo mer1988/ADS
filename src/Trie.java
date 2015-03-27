@@ -10,22 +10,43 @@ public class Trie {
 	private Node root;
 	
 	public Trie(){
-		root = null;
+		root = (Node) new BranchNode();
+		root.setRight(null);
+		root.setLeft(null);
 	}
 	
 	
 	public boolean insert(String address, Integer hop){
 		Node r = root;
+		Node prev = null;
+		int where = -1;
 		int level = 0;
 		
 		while(r != null){
-			
-			
+			prev = r;
+			if(address.substring(level, level+1) == "0"){
+				r = r.getLeft();
+				where = 0;
+			}
+			else{
+				r = r.getRight();
+				where = 1;
+			}
+			level += 1;
+		}
+		
+		if(prev.getKey() == null){ //Node is not element node
+			Node newNode = new ElementNode(address, hop);
+			if(where == 0){
+				prev.setLeft(newNode);
+			}
+			if(where == 1){
+				prev.setRight(newNode);
+			}
+		}else{ //node is element node
 			
 			
 		}
-		
-		
 		
 		return false;
 	}
@@ -40,19 +61,25 @@ public class Trie {
 		return "";
 	}
 	
+	public String normalizeIp(String ip){
+		while(ip.length() < 32){
+			ip = "0"+ip;
+		}
+
+		return ip;
+	}
+	
 	public void load(String path) throws Exception{
 		
 		FileInputStream fstream = new FileInputStream(path);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
 		String strLine;
-		
-		//Read First Line
-		strLine = br.readLine();
-		
+	
 		int label = 0;
 		while ((strLine = br.readLine()) != null)   {
-			String binary = ipToBinary(strLine);
+			String binary = normalizeIp(ipToBinary(strLine));
+			System.out.println(binary);
 			insert(binary, label);
 			label += 1;			
 		}
@@ -85,18 +112,15 @@ public class Trie {
 	
 	private class Node{
 		
-		public Node getRight(){
-			return null;
-		}
+		public Node getRight(){	return null;}
 		
-		public Node getLeft(){
-			return null;
-		} 
+		public Node getLeft(){return null;} 
 		
-		public String getKey(){
-			return null;
-		}
+		public String getKey(){	return null;}
 		
+		public void setRight(Node r){ }
+		
+		public void setLeft(Node r){ }
 	}
 	
 	private class BranchNode extends Node{
@@ -116,6 +140,14 @@ public class Trie {
 		@Override
 		public Node getLeft(){
 			return left;
+		}
+		
+		public void setRight(Node r){
+			right = r;
+		}
+		
+		public void setLeft(Node r){
+			left = r;
 		}
 	}
 	
