@@ -16,39 +16,68 @@ public class Trie {
 	}
 	
 	
-	public boolean insert(String address, Integer hop){
+	public void insert (String address, Integer hop) throws Exception{
 		Node r = root;
-		Node prev = null;
-		int where = -1;
+		Node p = null;
+		Node gp = null;
 		int level = 0;
 		
 		while(r != null){
-			prev = r;
+			gp = p;
+			p = r;
 			if(address.substring(level, level+1) == "0"){
-				r = r.getLeft();
-				where = 0;
+				r = r.getLeft();	
 			}
 			else{
-				r = r.getRight();
-				where = 1;
+				r = r.getRight();	
 			}
 			level += 1;
 		}
 		
-		if(prev.getKey() == null){ //Node is not element node
+		if(p.getKey() == null){ //Prev is not element node
 			Node newNode = new ElementNode(address, hop);
-			if(where == 0){
-				prev.setLeft(newNode);
+			if(address.substring(level-1, level).equals("0")){
+				p.setLeft(newNode);
 			}
-			if(where == 1){
-				prev.setRight(newNode);
+			else{
+				p.setRight(newNode);
 			}
 		}else{ //node is element node
-			
-			
+			if(p.getKey().equals(address)){
+				throw new Exception("Inserting duplicated IP address");
+			}
+			else{
+				Node n = new BranchNode();
+				
+				if(address.substring(level-2, level-1).equals("0")){
+					gp.setLeft(n);
+				}
+				else{
+					gp.setRight(n);
+				}
+				level = level -1;
+				while(p.getKey().substring(level, level+1).equals(address.substring(level, level+1))){
+					Node n2 = new BranchNode();
+					
+					if(address.substring(level, level+1).equals("0"))
+						n.setLeft(n2);
+					else
+						n.setRight(n2);
+					
+					n = n2;
+					level = level + 1;
+				}
+				
+				if(address.substring(level, level+1).equals("0")){
+					n.setLeft(new ElementNode(address, hop));
+					n.setRight(p);
+				}
+				else{
+					n.setRight(new ElementNode(address, hop));
+					n.setLeft(p);
+				}
+			}			
 		}
-		
-		return false;
 	}
 	
 	public boolean search(String Address){
@@ -103,6 +132,8 @@ public class Trie {
 //		}
 		return data_out_string;
 	}
+	
+	
 	
 	/*
 	 * 
@@ -163,6 +194,7 @@ public class Trie {
 		public String getKey(){
 			return key;
 		}
+		
 		
 	}
 }
