@@ -36,7 +36,7 @@ public class Graph{
 		String[] num = strLine.split(" ");
 		numVert = Integer.parseInt(num[0]);
 		numEdg = Integer.parseInt(num[1]);
-		
+		br.readLine();
 		//Create all vertices
 		for (int i = 0; i < numVert; i++) {
 			vertices.put((Integer) i, new Vertex(i));
@@ -49,7 +49,7 @@ public class Graph{
 			
 			v1.addAdyasentVertex(v2.getLabel(), w);
 			v2.addAdyasentVertex(v1.getLabel(), w);
-			
+			br.readLine();
 		}
 
 		//Close the input stream

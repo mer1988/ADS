@@ -12,27 +12,16 @@ public class SSP {
 		Graph graph = new Graph();
 				
 		try{
-			graph.load("test/new_input_5000_1_part1.txt");
+			graph.load("test/input_1000_50_part1.txt");
 		}catch(Exception ex){
+			//ex.printStackTrace();
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
 		
-		try{
-			graph.setSource(new Integer("0"));
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			System.exit(1);
-		}
 		
-		try{
-			graph.setDest(new Integer("4999"));
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			System.exit(1);
-		}
 		
-		Map.Entry<Integer, Integer[]> e = Dijkstra(graph);
+		Map.Entry<Integer[], Integer[]> e = Dijkstra(graph, "0", "999");
 		
 		Integer[] prev = e.getValue();
 		Integer Inx = prev[graph.getDest()];
@@ -43,19 +32,32 @@ public class SSP {
 			Inx = prev[Inx];
 		}
 		
-		System.out.println(e.getKey());
+		System.out.println(e.getKey()[graph.getDest()]);
 		System.out.print(path);
 
 		
 	}
 	
 	
-	public static Map.Entry<Integer, Integer[]> Dijkstra (Graph g){		
+	public static Map.Entry<Integer[], Integer[]> Dijkstra (Graph g, String source, String dest){		
 		
 		FibonacciHeap heap = new FibonacciHeap();
 		Integer[] dist = new Integer[g.getNumVetices()];
 		Integer[] prev = new Integer[g.getNumVetices()];
 		
+		try{
+			g.setSource(new Integer(source));
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			System.exit(1);
+		}
+		
+		try{
+			g.setDest(new Integer(dest));
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			System.exit(1);
+		}
 		
 		for(int i=0;i<g.getNumVetices();i++){
 			Integer nodeLabel = new Integer(i);
@@ -84,7 +86,7 @@ public class SSP {
 			
 		}
 		
-		Map.Entry<Integer,Integer[]> result = new AbstractMap.SimpleEntry<Integer, Integer[]>(dist[g.getDest()], prev);
+		Map.Entry<Integer[],Integer[]> result = new AbstractMap.SimpleEntry<Integer[], Integer[]>(dist, prev);
 		return result;
 	}
 	
