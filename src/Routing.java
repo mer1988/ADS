@@ -26,7 +26,9 @@ public class Routing {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-		
+		int source = 0;
+		int dest = 3;
+		int minDist = -1;
 		//Create Routing table for every node... is this O(n^2)??? 
 		for(int i=0;i<graph.getNumVetices();i++){	
 			Map.Entry<Integer[], Integer[]> e = SSP.Dijkstra(graph, i+"");
@@ -39,19 +41,32 @@ public class Routing {
 	 					Inx = prev[Inx];
 	 				}
 	 				
-	 				System.out.println(j+" - "+Inx);
+	 				//System.out.println(j+" - "+Inx);
 	 				
 	 				try{
-	 					graph.addEntryRoutingTable(i, ips.get(j), ips.get(Inx));
+	 					graph.addEntryRoutingTable(i, ips.get(j), Inx);
 	 				}catch(Exception ex){
 	 					//System.out.println(ex.getMessage());
 	 					ex.printStackTrace();
 	 					System.exit(1);
 	 				}
 	 			}
+	 			if(i ==  source && j == dest){
+	 				minDist = dist[dest];
+	 			}
 			}
  			graph.traverseNode(i);
 		}
+		
+		//simulate network sending packet from source to destination
+		
+		System.out.println(minDist);
+		String path = "";
+		Integer node = source;
+//		while(node != dest){
+//			path = path + " "+ ips.get(dest);
+//			node = graph.getNextHub(node, ips.get(dest));			
+//		}
 		
 	}
 	

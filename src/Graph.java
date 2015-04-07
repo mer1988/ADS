@@ -62,7 +62,7 @@ public class Graph{
 		
 	}
 	
-	public void addEntryRoutingTable(Integer node, String dest, String next) throws Exception{
+	public void addEntryRoutingTable(Integer node, String dest, Integer next) throws Exception{
 		
 		vertices.get(node).addPairRoutingTable(dest, next);
 		
@@ -122,6 +122,10 @@ public class Graph{
 		return vertices.get(vertex).getAdyasents();
 	}
 	
+	public Integer getNextHub(Integer n, String dest){
+		return vertices.get(n).routingTable.longestPrefixMatch(dest);
+	}
+	
 	
 	private class Vertex{
 		
@@ -152,7 +156,7 @@ public class Graph{
 			return adyasent.entrySet();
 		}
 		
-		public void addPairRoutingTable(String dest, String next) throws Exception{ 
+		public void addPairRoutingTable(String dest, Integer next) throws Exception{ 
 			routingTable.insert(dest, next);
 		}
 		

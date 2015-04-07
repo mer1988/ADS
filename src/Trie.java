@@ -29,10 +29,37 @@ public class Trie {
 					}
 				}
 			}
+			else{
+				if(n.getLeft() == null && n.getRight() != null){
+					if( n.getRight().getValue() != null){
+						
+						if(d == 1){
+							p.setRight(n.getRight());
+						}
+						else{
+							p.setLeft(n.getRight());
+						}
+						
+					}
+				}
+				else{
+					if(n.getLeft() != null && n.getRight() == null){
+						if(n.getLeft().getValue() != null){
+							if(d == 1){
+								p.setRight(n.getLeft());
+							}
+							else{
+								p.setLeft(n.getLeft());
+							}
+						}
+					}
+				}				
+			}
 		}		
 	}
 	
 	private void postorder(Node p, Node n, int d){
+		
 		if (n != null){
 			postorder(n, n.getLeft(), 0);
 			postorder(n, n.getRight(), 1);
@@ -45,7 +72,7 @@ public class Trie {
 		postorder(null, root, -1);
 	}
 	
-	public void insert (String key, String value) throws Exception{
+	public void insert (String key, Integer value) throws Exception{
 		Node r = root;
 		Node p = null;
 		Node gp = null;
@@ -114,9 +141,9 @@ public class Trie {
 		return false;
 	}
 	
-	public String longestPrefixMatch(String key){
+	public Integer longestPrefixMatch(String key){
 		
-		return "";
+		return 0;
 	}
 	
 
@@ -141,7 +168,7 @@ public class Trie {
 		
 		public void setLeft(Node r){ }
 		
-		public String getValue() { return null;}
+		public Integer getValue() { return null;}
 	}
 	
 	private class BranchNode extends Node{
@@ -174,9 +201,9 @@ public class Trie {
 	
 	private class ElementNode extends Node{
 		private String key;
-		private String value;
+		private Integer value;
 		
-		public ElementNode(String key, String value){
+		public ElementNode(String key, Integer value){
 			this.value = value;
 			this.key = key;
 		}
@@ -185,7 +212,7 @@ public class Trie {
 			return key;
 		}
 		
-		public String getValue(){
+		public Integer getValue(){
 			return value;
 		}
 		
