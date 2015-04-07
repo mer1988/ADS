@@ -57,6 +57,17 @@ public class Graph{
 		
 	}	
 	
+	public void traverseNode(Integer n){
+		vertices.get(n).getRoutingTable().traverse();
+		
+	}
+	
+	public void addEntryRoutingTable(Integer node, String dest, String next) throws Exception{
+		
+		vertices.get(node).addPairRoutingTable(dest, next);
+		
+	}
+	
 	public int getNumVetices(){
 		return numVert;
 	}
@@ -116,10 +127,12 @@ public class Graph{
 		
 		private Integer label;
 		private Map<Integer, Integer> adyasent; 
+		private Trie	routingTable;
 
 		public Vertex(Integer label) {
 			this.label = label;
 			adyasent = new HashMap<Integer, Integer>();
+			routingTable = new Trie();
 		}
 
 		public Integer getLabel() {
@@ -139,6 +152,13 @@ public class Graph{
 			return adyasent.entrySet();
 		}
 		
+		public void addPairRoutingTable(String dest, String next) throws Exception{ 
+			routingTable.insert(dest, next);
+		}
+		
+		public Trie getRoutingTable(){
+			return routingTable;
+		}
 					
 	}
 	

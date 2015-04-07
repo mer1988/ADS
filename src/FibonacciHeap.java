@@ -52,9 +52,7 @@ public class FibonacciHeap {
         
 
         size -= 1;;
-
         Node minCopy = min;
-       
         if (min.next == min) { 
             min = null; 
         }
@@ -79,17 +77,13 @@ public class FibonacciHeap {
         if (min == null) return minCopy.getElem();
         
         List<Node> treeTable = new ArrayList<Node>();
-
         List<Node> toVisit = new ArrayList<Node>();
 
         for (Node n = min; toVisit.isEmpty() || toVisit.get(0) != n; n = n.next)
             toVisit.add(n);
 
-        
-        for (Node n: toVisit) {
-            
-            while (true) {
-                
+        for (Node n: toVisit) {    
+            while (true) {   
                 while (n.degree >= treeTable.size())
                     treeTable.add(null);
 
@@ -122,14 +116,11 @@ public class FibonacciHeap {
         return minCopy.getElem();
     }
 
-    
-  
     public void delete(Node entry) throws Exception{  
         decreaseKey(entry.getElem(), Integer.MIN_VALUE);
         extractMin();
     }
-
-   
+    
     private Node mergeLists(Node n1, Node n2) {
        
         if (n1 == null && n2 == null) { // Both null, resulting list is null.
@@ -147,12 +138,10 @@ public class FibonacciHeap {
             n1.next.prev = n1;
             n2.next = oneNext;
             n2.next.prev = n2;
-
-          
+            
             return n1.priority < n2.priority? n1 : n2;
         }
     }
-
     
     public void decreaseKey(Integer nodeLabel, int priority) {
     	Node n = nodes.get(nodeLabel);
@@ -179,14 +168,12 @@ public class FibonacciHeap {
             n.next.prev = n.prev;
             n.prev.next = n.next;
         }
-
         
         if (n.parent.child == n) {
             
             if (n.next != n) {
                 n.parent.child = n.next;
             }
-          
             else {
                 n.parent.child = null;
             }

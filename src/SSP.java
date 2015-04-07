@@ -19,9 +19,14 @@ public class SSP {
 			System.exit(1);
 		}
 		
+		try{
+			graph.setDest(new Integer("999"));
+		}catch(Exception ex){
+			System.out.println(ex.getMessage());
+			System.exit(1);
+		}
 		
-		
-		Map.Entry<Integer[], Integer[]> e = Dijkstra(graph, "0", "999");
+		Map.Entry<Integer[], Integer[]> e = Dijkstra(graph, "0");
 		
 		Integer[] prev = e.getValue();
 		Integer Inx = prev[graph.getDest()];
@@ -39,7 +44,7 @@ public class SSP {
 	}
 	
 	
-	public static Map.Entry<Integer[], Integer[]> Dijkstra (Graph g, String source, String dest){		
+	public static Map.Entry<Integer[], Integer[]> Dijkstra (Graph g, String source){		
 		
 		FibonacciHeap heap = new FibonacciHeap();
 		Integer[] dist = new Integer[g.getNumVetices()];
@@ -52,12 +57,7 @@ public class SSP {
 			System.exit(1);
 		}
 		
-		try{
-			g.setDest(new Integer(dest));
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			System.exit(1);
-		}
+		
 		
 		for(int i=0;i<g.getNumVetices();i++){
 			Integer nodeLabel = new Integer(i);

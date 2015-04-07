@@ -15,8 +15,37 @@ public class Trie {
 		root.setLeft(null);
 	}
 	
+	private void visit(Node p, Node n, int d){
+		if(n.getKey() == null){
+			if(n.getLeft() != null && n.getRight() != null){
+				if(n.getLeft().getValue() != null && n.getRight().getValue() != null){
+					if(n.getLeft().getValue().equals(n.getRight().getValue())){
+						if(d == 1){
+							p.setRight(n.getLeft());
+						}
+						else{
+							p.setLeft(n.getLeft());
+						}
+					}
+				}
+			}
+		}		
+	}
 	
-	public void insert (String address, Integer hop) throws Exception{
+	private void postorder(Node p, Node n, int d){
+		if (n != null){
+			postorder(n, n.getLeft(), 0);
+			postorder(n, n.getRight(), 1);
+			visit(p, n, d);
+		}
+			
+	}
+	
+	public void traverse(){
+		postorder(null, root, -1);
+	}
+	
+	public void insert (String key, String value) throws Exception{
 		Node r = root;
 		Node p = null;
 		Node gp = null;
@@ -25,7 +54,7 @@ public class Trie {
 		while(r != null){
 			gp = p;
 			p = r;
-			if(address.substring(level, level+1) == "0"){
+			if(key.substring(level, level+1).equals("0")){
 				r = r.getLeft();	
 			}
 			else{
@@ -35,31 +64,31 @@ public class Trie {
 		}
 		
 		if(p.getKey() == null){ //Prev is not element node
-			Node newNode = new ElementNode(address, hop);
-			if(address.substring(level-1, level).equals("0")){
+			Node newNode = new ElementNode(key, value);
+			if(key.substring(level-1, level).equals("0")){
 				p.setLeft(newNode);
 			}
 			else{
 				p.setRight(newNode);
 			}
 		}else{ //node is element node
-			if(p.getKey().equals(address)){
-				throw new Exception("Inserting duplicated IP address");
+			if(p.getKey().equals(key)){
+				throw new Exception("Inserting duplicated IP key");
 			}
 			else{
 				Node n = new BranchNode();
 				
-				if(address.substring(level-2, level-1).equals("0")){
+				if(key.substring(level-2, level-1).equals("0")){
 					gp.setLeft(n);
 				}
 				else{
 					gp.setRight(n);
 				}
 				level = level -1;
-				while(p.getKey().substring(level, level+1).equals(address.substring(level, level+1))){
+				while(p.getKey().substring(level, level+1).equals(key.substring(level, level+1))){
 					Node n2 = new BranchNode();
 					
-					if(address.substring(level, level+1).equals("0"))
+					if(key.substring(level, level+1).equals("0"))
 						n.setLeft(n2);
 					else
 						n.setRight(n2);
@@ -68,70 +97,29 @@ public class Trie {
 					level = level + 1;
 				}
 				
-				if(address.substring(level, level+1).equals("0")){
-					n.setLeft(new ElementNode(address, hop));
+				if(key.substring(level, level+1).equals("0")){
+					n.setLeft(new ElementNode(key, value));
 					n.setRight(p);
 				}
 				else{
-					n.setRight(new ElementNode(address, hop));
+					n.setRight(new ElementNode(key, value));
 					n.setLeft(p);
 				}
 			}			
 		}
 	}
 	
-	public boolean search(String Address){
+	public boolean search(String value){
 		
 		return false;
 	}
 	
-	public String longestPrefixMatch(String Address){
+	public String longestPrefixMatch(String key){
 		
 		return "";
 	}
 	
-	public String normalizeIp(String ip){
-		while(ip.length() < 32){
-			ip = "0"+ip;
-		}
 
-		return ip;
-	}
-	
-	public void load(String path) throws Exception{
-		
-		FileInputStream fstream = new FileInputStream(path);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-		String strLine;
-	
-		int label = 0;
-		while ((strLine = br.readLine()) != null)   {
-			String binary = normalizeIp(ipToBinary(strLine));
-			System.out.println(binary);
-			insert(binary, label);
-			label += 1;			
-		}
-
-		//Close the input stream
-		br.close();
-		
-	}
-	
-	public String ipToBinary(String ip) throws Exception{
-		InetAddress ipAdr = InetAddress.getByName(ip);
-		byte[] bytes = ipAdr.getAddress();	
-		String data_out_string = new BigInteger(1, bytes).toString(2);
-//		boolean[] data_out_binary = new boolean[data_out_string.length()];
-//		for (int i = 0; i < data_out_string.length(); i++){
-//		    char c = data_out_string.charAt(i); 
-//		    if(c == '0')
-//		    	data_out_binary[i] = false;
-//		    else
-//		    	data_out_binary[i] = true;
-//		}
-		return data_out_string;
-	}
 	
 	
 	
@@ -152,6 +140,8 @@ public class Trie {
 		public void setRight(Node r){ }
 		
 		public void setLeft(Node r){ }
+		
+		public String getValue() { return null;}
 	}
 	
 	private class BranchNode extends Node{
@@ -184,15 +174,19 @@ public class Trie {
 	
 	private class ElementNode extends Node{
 		private String key;
-		private Integer value;
+		private String value;
 		
-		public ElementNode(String key, Integer value){
+		public ElementNode(String key, String value){
 			this.value = value;
 			this.key = key;
 		}
 		
 		public String getKey(){
 			return key;
+		}
+		
+		public String getValue(){
+			return value;
 		}
 		
 		
