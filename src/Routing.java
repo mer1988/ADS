@@ -26,8 +26,8 @@ public class Routing {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-		int source = 0;
-		int dest = 3;
+		int source = 1;
+		int dest = 6;
 		int minDist = -1;
 		//Create Routing table for every node... is this O(n^2)??? 
 		for(int i=0;i<graph.getNumVetices();i++){	
@@ -63,10 +63,12 @@ public class Routing {
 		System.out.println(minDist);
 		String path = "";
 		Integer node = source;
-//		while(node != dest){
-//			path = path + " "+ ips.get(dest);
-//			node = graph.getNextHub(node, ips.get(dest));			
-//		}
+		while(node != dest){
+			//System.out.print(node);
+			Map.Entry<Integer, String> e  = graph.getNextHub(node, ips.get(dest));
+			System.out.print(e.getValue()+" ");
+			node = e.getKey();
+		}
 		
 	}
 	

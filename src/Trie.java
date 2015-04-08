@@ -3,6 +3,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.util.AbstractMap;
+import java.util.Map;
 
 
 
@@ -141,9 +143,29 @@ public class Trie {
 		return false;
 	}
 	
-	public Integer longestPrefixMatch(String key){
+	public Map.Entry<Integer, String> longestPrefixMatch(String key){
+		String match ="";
+		Integer map;
+		Node pq = null;
+		Node q = root;
+		int i = 0;
+		while(q != null && i < 32){
+			pq = q;
+			if(key.substring(i, i+1).equals("0")){
+				q = q.getLeft();
+				if(q != null){match = match+"0";i += 1;}
+			}else{
+				q = q.getRight();
+				if(q != null){match = match+"1";i += 1;}
+			}
+			
+		}
+		if(i == 32) map = q.getValue();
+		else map = pq.getValue();
 		
-		return 0;
+		
+		Map.Entry<Integer,String> result = new AbstractMap.SimpleEntry<Integer, String>(map ,match );
+		return result;
 	}
 	
 

@@ -122,8 +122,10 @@ public class Graph{
 		return vertices.get(vertex).getAdyasents();
 	}
 	
-	public Integer getNextHub(Integer n, String dest){
+	public Map.Entry<Integer, String> getNextHub(Integer n, String dest){
+		
 		return vertices.get(n).routingTable.longestPrefixMatch(dest);
+	
 	}
 	
 	
