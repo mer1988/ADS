@@ -33,19 +33,11 @@ public class FibonacciHeap {
         
     }
     
-   
-
     public boolean isEmpty() {
         if (size != 0) return false;
         else return true;
     }
 
- 
-
-    
-
-
-   
     public Integer extractMin() {
         size -= 1;
         Node minCopy = min;
@@ -122,11 +114,6 @@ public class FibonacciHeap {
         }
         return minCopy.getLabel();
     }
-
-    public void delete(Node entry) throws Exception{  
-        decreaseKey(entry, Integer.MIN_VALUE);
-        extractMin();
-    }
     
     private Node meld(Node n1, Node n2) {
        
@@ -153,7 +140,7 @@ public class FibonacciHeap {
         
     }
     
-    public void decreaseKey(Node n, int priority) {
+    public void decreasePriority(Node n, int priority) {
     	
     	if(n != null){
     		n.setPriority(priority);
@@ -167,7 +154,6 @@ public class FibonacciHeap {
         
     }
 
-   
     private void cut(Node n) {
         
         n.setChildCut(false);

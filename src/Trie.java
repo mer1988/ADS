@@ -134,10 +134,6 @@ public class Trie {
 		}
 	}
 	
-	public boolean search(String value){
-		
-		return false;
-	}
 	
 	public Map.Entry<Integer, String> longestPrefixMatch(String key){
 		String match ="";

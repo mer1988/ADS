@@ -76,14 +76,14 @@ public class ssp {
 			//System.out.println(heap.getSize());
 			int u = heap.extractMin();
 			
-			for (Map.Entry<Integer, Integer> ady: g.getAdyacents(u)){
+			for (Map.Entry<Integer, Integer> ady: g.getAdjacents(u)){
 				int adyVertex = ady.getKey();
 			    int distance = ady.getValue();
 			    int alt = dist[u] + distance;
 			    if(alt < dist[adyVertex]){
 			    	dist[adyVertex] = alt;
 			    	prev[adyVertex] = u;
-			    	heap.decreaseKey(g.getNode(adyVertex), alt);
+			    	heap.decreasePriority(g.getNode(adyVertex), alt);
 			    }
 			}
 			

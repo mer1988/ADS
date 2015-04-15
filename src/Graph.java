@@ -48,8 +48,8 @@ public class Graph{
 			
 			int 	w = sc.nextInt();
 			
-			v1.addAdyasentVertex(v2lbl, w);
-			v2.addAdyasentVertex(v1lbl, w);
+			v1.addAdjasentVertex(v2lbl, w);
+			v2.addAdjasentVertex(v1lbl, w);
 			
         }	
         
@@ -111,8 +111,8 @@ public class Graph{
 		    Integer key = entry.getKey();
 		    Node value = entry.getValue();
 		    str += "Vertex("+key+"):";
-		    for(Map.Entry<Integer, Integer> e: value.getAdyasents()){
-		    	str += "Ady("+e.getKey()+", "+e.getValue()+"), ";
+		    for(Map.Entry<Integer, Integer> e: value.getAdjasents()){
+		    	str += "Adj("+e.getKey()+", "+e.getValue()+"), ";
 		    }
 		    str += "\n";
 		}
@@ -120,15 +120,13 @@ public class Graph{
 		return str;
 	}
 	
-	public Set<Entry<Integer, Integer>>  getAdyacents(Integer vertex){
-		return vertices.get(vertex).getAdyasents();
+	public Set<Entry<Integer, Integer>>  getAdjacents(Integer vertex){
+		return vertices.get(vertex).getAdjasents();
 	}
-	
 	
 	public Map.Entry<Integer, String> getNextHub(int n, int dest){
 		return vertices.get(n).getRoutingTable().longestPrefixMatch(vertices.get(dest).getIp());	
 	}
-	
 	
 	public Node getNode(int label){
 		return vertices.get(label);

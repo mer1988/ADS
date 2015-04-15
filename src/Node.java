@@ -14,7 +14,7 @@ public class Node {
 	private int 		priority; 
 	
 	//For Graph
-	private Map<Integer, Integer> 	adyasent; 
+	private Map<Integer, Integer> 	adjasent; 
 	private int 					label;
 	
 	//For Routing
@@ -23,7 +23,7 @@ public class Node {
 
 	
 	public Node(int label) {
-		adyasent = new HashMap<Integer, Integer>();
+		adjasent = new HashMap<Integer, Integer>();
 		routingTable = new Trie();
 		next = this;
 	    prev = this;
@@ -35,13 +35,13 @@ public class Node {
 		return label;
 	}
 	
-	public void addAdyasentVertex(Integer v2, Integer weight){
-		adyasent.put(v2, weight);			
+	public void addAdjasentVertex(Integer v2, Integer weight){
+		adjasent.put(v2, weight);			
 	}
 
 	
-	public Set<Entry<Integer, Integer>> getAdyasents(){
-		return adyasent.entrySet();
+	public Set<Entry<Integer, Integer>> getAdjasents(){
+		return adjasent.entrySet();
 	}
 	
 	public void addPairRoutingTable(String dest, Integer next) throws Exception{ 
