@@ -1,231 +1,208 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 
 public class FibonacciHeap {
-	private Map<Integer, Node> nodes;
+	
     private Node min;
     private int size;
 
     public FibonacciHeap() {
 		min = null;
 		size = 0;
-		nodes = new HashMap<Integer, Node>();
+		
 	}
     
+    public int getSize(){
+    	return size;
+    }
     
-    public void enqueue(Integer value, int priority) {
+    public void insert(Node n,  int priority) {
+    	n.setParent(null);
+    	n.setChild(null);
     	
+    	n.setNext(n);
+    	n.setPrev(n);
     	
-        Node newNode = new Node(value, priority);
-        
-        nodes.put(value, newNode);
-       
-        
-        min = mergeLists(min, newNode);
+    	n.setDegree(0);
+    	n.setPriority(priority);
+    	
+        min = meld(min, n);
         size += 1;
         
     }
     
-    public Integer getMin() {
-       
-        return min.getElem();
-    }
+   
 
     public boolean isEmpty() {
-        return min == null;
+        if (size != 0) return false;
+        else return true;
     }
 
  
-    public int getSize() {
-        return size;
-    }
 
     
 
 
    
     public Integer extractMin() {
-        
-
-        size -= 1;;
+        size -= 1;
         Node minCopy = min;
-        if (min.next == min) { 
+       
+        
+        if (min.getNext() == min) { 
             min = null; 
         }
         else {
-            min.prev.next = min.next;
-            min.next.prev = min.prev;
-            min = min.next; 
+            min.getPrev().setNext(min.getNext());
+            min.getNext().setPrev(min.getPrev());
+            min = min.getNext(); 
         }
         
-        if (minCopy.child != null) {
+        if (minCopy.getChild() != null) {  
+            Node n = minCopy.getChild().getNext();
             
-            Node n = minCopy.child;
-            
-            do {
-                n.parent = null;
-                n = n.next;
-            } while (n != minCopy.child);
+            while(n != minCopy.getChild()){
+                n.setParent(null);
+                n = n.getNext();
+            } 
+            n.setParent(null);
         }
 
-        min = mergeLists(min, minCopy.child);
+        min = meld(min, minCopy.getChild());
 
-        if (min == null) return minCopy.getElem();
+        if (min == null) return minCopy.getLabel();
         
-        List<Node> treeTable = new ArrayList<Node>();
+        List<Node> mergeTable = new ArrayList<Node>();
         List<Node> toVisit = new ArrayList<Node>();
 
-        for (Node n = min; toVisit.isEmpty() || toVisit.get(0) != n; n = n.next)
+        for (Node n = min; toVisit.isEmpty() || toVisit.get(0) != n; n = n.getNext())
             toVisit.add(n);
 
         for (Node n: toVisit) {    
             while (true) {   
-                while (n.degree >= treeTable.size())
-                    treeTable.add(null);
+                while (n.getDegree() >= mergeTable.size())
+                    mergeTable.add(null);
 
-                if (treeTable.get(n.degree) == null) {
-                    treeTable.set(n.degree, n);
+                if (mergeTable.get(n.getDegree()) == null) {
+                    mergeTable.set(n.getDegree(), n);
                     break;
                 }
                 
-                Node n2 = treeTable.get(n.degree);
-                treeTable.set(n.degree, null); 
+                Node n2 = mergeTable.get(n.getDegree());
+                mergeTable.set(n.getDegree(), null); 
 
-                Node min = (n2.priority < n.priority)? n2 : n;
-                Node max = (n2.priority < n.priority)? n  : n2;
-
-                max.next.prev = max.prev;
-                max.prev.next = max.next;
-
-                max.next = max;
-                max.prev = max;
-                min.child = mergeLists(min.child, max);
+                Node min;
+                Node max;
                 
-                max.parent = min;
-                max.childCut = false;
-                min.degree += 1;               
+                if(n2.getPriority() < n.getPriority()){
+                	min = n2;
+                	max = n;
+                }
+                else{
+                	min = n;
+                	max = n2;
+        		}
+                
+                max.getNext().setPrev(max.getPrev());
+                max.getPrev().setNext(max.getNext());
+
+                max.setNext(max);
+                max.setPrev(max);
+                min.setChild(meld(min.getChild(), max));
+                
+                max.setParent( min );
+                max.setChildCut(false);
+                min.setDegree(min.getDegree()+1);               
                 n = min;
             }
 
-            if (n.priority <= min.priority) min = n;
+            if (n.getPriority() <= min.getPriority()) min = n;
         }
-        return minCopy.getElem();
+        return minCopy.getLabel();
     }
 
     public void delete(Node entry) throws Exception{  
-        decreaseKey(entry.getElem(), Integer.MIN_VALUE);
+        decreaseKey(entry, Integer.MIN_VALUE);
         extractMin();
     }
     
-    private Node mergeLists(Node n1, Node n2) {
+    private Node meld(Node n1, Node n2) {
        
-        if (n1 == null && n2 == null) { // Both null, resulting list is null.
+        if (n1 == null && n2 == null) { 
             return null;
         }
-        else if (n1 != null && n2 == null) { // Two is null, result is one.
+        else if (n1 != null && n2 == null) { 
             return n1;
         }
-        else if (n1 == null && n2 != null) { // One is null, result is two.
+        else if (n1 == null && n2 != null) {
             return n2;
         }
         else { 
-            Node oneNext = n1.next;
-            n1.next = n2.next;
-            n1.next.prev = n1;
-            n2.next = oneNext;
-            n2.next.prev = n2;
-            
-            return n1.priority < n2.priority? n1 : n2;
+            Node nxt = n1.getNext();
+            n1.setNext(n2.getNext());
+            n1.getNext().setPrev(n1);
+            n2.setNext(nxt);
+            n2.getNext().setPrev(n2);   
         }
+        if(n1.getPriority() < n2.getPriority())
+        	return n1;
+        else
+        	return n2;
+        
     }
     
-    public void decreaseKey(Integer nodeLabel, int priority) {
-    	Node n = nodes.get(nodeLabel);
+    public void decreaseKey(Node n, int priority) {
+    	
     	if(n != null){
-    		n.priority = priority;
+    		n.setPriority(priority);
     	       
-            if (n.parent != null && n.priority <= n.parent.priority)
-                cutNode(n);
+            if (n.getParent() != null && n.getPriority() <= n.getParent().getPriority())
+                cut(n);
           
-            if (n.priority <= min.priority)
+            if (n.getPriority() <= min.getPriority())
                 min = n;    		
     	}
         
     }
 
    
-    private void cutNode(Node n) {
+    private void cut(Node n) {
         
-        n.childCut = false;
+        n.setChildCut(false);
         
-        if (n.parent == null) return;
+        if (n.getParent() == null) return;
 
-        if (n.next != n) { 
-            n.next.prev = n.prev;
-            n.prev.next = n.next;
+        if (n.getNext() != n) { 
+            n.getNext().setPrev( n.getPrev() );
+            n.getPrev().setNext( n.getNext() );
         }
         
-        if (n.parent.child == n) {
+        if (n.getParent().getChild() == n) {
             
-            if (n.next != n) {
-                n.parent.child = n.next;
+            if (n.getNext() != n) {
+                n.getParent().setChild(n.getNext());
             }
             else {
-                n.parent.child = null;
+                n.getParent().setChild( null );
             }
         }
 
        
-        n.parent.degree -= 1;
+        n.getParent().setDegree(n.getParent().getDegree() - 1);
 
-        n.prev = n.next = n;
-        min = mergeLists(min, n);
+        n.setPrev(n);
+        n.setNext(n);
         
-        if (n.parent.childCut)
-            cutNode(n.parent);
+        min = meld(min, n);
+        
+        if (n.getParent().getChildCut())
+            cut(n.getParent());
         else
-            n.parent.childCut = true;
+            n.getParent().setChildCut( true );
         
-        n.parent = null;
+        n.setParent( null );
     }
-    
-    
-    /*
-     * Fib Heap Node class
-     * */
-    
-    private class Node {
-        private int     	degree = 0;       
-        private boolean 	childCut = false; 
-        private Node 		next, prev, parent, child;  
-        private Integer     elem;     
-        private int 		priority; 
-
-        private Node(Integer elem, int priority) {
-            next = this;
-            prev = this;
-            this.elem = elem;
-            this.priority = priority;
-        }
-        
-        public Integer getElem() {
-            return elem;
-        }
-       
-        public void setElem(Integer elem) {
-            this.elem = elem;
-        }
-
-        public double getPriority() {
-            return priority;
-        }
-
-        
-    }
-    
-    
+   
 }

@@ -1,59 +1,61 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
 
 
 public class Graph{
 	
-	private Vertex 						source;
-	private Vertex 						dest;
-	private Map<Integer, Vertex> 	    vertices;
-	private int							numVert, numEdg;
+	private int 						source;
+	private int 						dest;
+	private Map<Integer, Node> 	    	vertices;
+	private int							numVert,numEdg;
  	
+		
 	public Graph (){
-		vertices = new HashMap<Integer, Vertex>();
-		source = null;
-		dest = null;
+		vertices = new HashMap<Integer, Node>();
+		source = -1;
+		dest = -1;
 		numVert = 0;
-		numEdg = 0;
+		numEdg = 0;		
 	}
 	
 	public void load (String path) throws IOException{
-	
-		FileInputStream fstream = new FileInputStream(path);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-		String strLine;
 		
-		//Read First Line
-		strLine = br.readLine();
-		String[] num = strLine.split(" ");
-		numVert = Integer.parseInt(num[0]);
-		numEdg = Integer.parseInt(num[1]);
-		br.readLine();
-		//Create all vertices
-		for (int i = 0; i < numVert; i++) {
-			vertices.put((Integer) i, new Vertex(i));
-		}
-		while ((strLine = br.readLine()) != null)   {
-			String[] edge =  strLine.split(" ");
-			Vertex v1 = vertices.get(new Integer(edge[0]));
-			Vertex v2 = vertices.get(new Integer(edge[1]));
-			int w = Integer.parseInt(edge[2]);
-			
-			v1.addAdyasentVertex(v2.getLabel(), w);
-			v2.addAdyasentVertex(v1.getLabel(), w);
-			br.readLine();
-		}
+		File file = new File(path);
+	    Scanner sc = new Scanner(file);
+	    
+	    numVert = sc.nextInt();
+	    numEdg = sc.nextInt();
 
-		//Close the input stream
-		br.close();
+        while (sc.hasNextInt()){
+        	int v1lbl = sc.nextInt();
+        	int v2lbl = sc.nextInt();
+        	
+            Node 	v1 = vertices.get(v1lbl);
+			Node 	v2 = vertices.get(v2lbl);           
+			if(v1 == null){
+				v1 = new Node(v1lbl);
+				vertices.put(v1lbl, v1);
+			}
+			if(v2 == null){
+				v2 = new Node(v2lbl);
+				vertices.put(v2lbl, v2);
+			}
+			
+			int 	w = sc.nextInt();
+			
+			v1.addAdyasentVertex(v2lbl, w);
+			v2.addAdyasentVertex(v1lbl, w);
+			
+        }	
+        
+        sc.close();
+   
+		
 		
 	}	
 	
@@ -62,9 +64,9 @@ public class Graph{
 		
 	}
 	
-	public void addEntryRoutingTable(Integer node, String dest, Integer next) throws Exception{
+	public void addEntryRoutingTable(int node, int dest, int next) throws Exception{
 		
-		vertices.get(node).addPairRoutingTable(dest, next);
+		vertices.get(node).addPairRoutingTable(vertices.get(dest).getIp(), next);
 		
 	}
 	
@@ -73,31 +75,31 @@ public class Graph{
 	}
 	
 	public Integer getSource() {
-		return source.getLabel();
+		return source;
 	}
 
 	public void setSource(Integer source) throws Exception{
 		
 		if(vertices.get(source) != null)
-			this.source = vertices.get(source);
+			this.source = source;
 		else{
 			throw new Exception("source vertex not found!");
 		}
 	}
 
 	public Integer getDest() {
-		return dest.getLabel();
+		return dest;
 	}
 
 	public void setDest(Integer dest) throws Exception {
 		if(vertices.get(dest) != null)
-			this.dest = vertices.get(dest);
+			this.dest = dest;
 		else{
 			throw new Exception("destination vertex not found!");
 		}
 	}
 		
-	public Map<Integer, Vertex> getVertices() {
+	public Map<Integer, Node> getVertices() {
 		return vertices;
 	}
 
@@ -105,9 +107,9 @@ public class Graph{
 		String str = "";
 		str += "Source: "+getSource()+"\n";
 		str += "Destination: "+getDest()+"\n";
-		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet()) {
+		for (Map.Entry<Integer, Node> entry : vertices.entrySet()) {
 		    Integer key = entry.getKey();
-		    Vertex value = entry.getValue();
+		    Node value = entry.getValue();
 		    str += "Vertex("+key+"):";
 		    for(Map.Entry<Integer, Integer> e: value.getAdyasents()){
 		    	str += "Ady("+e.getKey()+", "+e.getValue()+"), ";
@@ -122,52 +124,14 @@ public class Graph{
 		return vertices.get(vertex).getAdyasents();
 	}
 	
-	public Map.Entry<Integer, String> getNextHub(Integer n, String dest){
-		
-		return vertices.get(n).routingTable.longestPrefixMatch(dest);
 	
+	public Map.Entry<Integer, String> getNextHub(int n, int dest){
+		return vertices.get(n).getRoutingTable().longestPrefixMatch(vertices.get(dest).getIp());	
 	}
 	
 	
-	private class Vertex{
-		
-		private Integer label;
-		private Map<Integer, Integer> adyasent; 
-		private Trie	routingTable;
-
-		public Vertex(Integer label) {
-			this.label = label;
-			adyasent = new HashMap<Integer, Integer>();
-			routingTable = new Trie();
-		}
-
-		public Integer getLabel() {
-			return label;
-		}
-
-		public void setLabel(Integer label) {
-			this.label = label;
-		}
-		
-		public void addAdyasentVertex(Integer v2, Integer weight){
-			adyasent.put(v2, weight);			
-		}
-
-		
-		public Set<Entry<Integer, Integer>> getAdyasents(){
-			return adyasent.entrySet();
-		}
-		
-		public void addPairRoutingTable(String dest, Integer next) throws Exception{ 
-			routingTable.insert(dest, next);
-		}
-		
-		public Trie getRoutingTable(){
-			return routingTable;
-		}
-					
+	public Node getNode(int label){
+		return vertices.get(label);
 	}
-	
-	
 
 }

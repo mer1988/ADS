@@ -1,50 +1,55 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
-public class Routing {
+public class routing {
 
 	public static void main(String Args[]){
 		
 		Graph 					graph = new Graph();
-		Map<Integer, String>	ips = new HashMap<Integer, String>();
+		
 		try{
-			graph.load("test/input_graphsmall_part2.txt");
+			graph.load(Args[0]);
 		}catch(Exception ex){
-			System.out.println(ex.getMessage());
+			//System.out.println(ex.getMessage());
+			ex.printStackTrace();
 			System.exit(1);
 		}
 		
 		try{
-			ips = loadIps("test/input_ipsmall_part2.txt");
+			loadIps(graph, Args[1]);
 		}catch(Exception ex){
-			System.out.println(ex.getMessage());
+			ex.printStackTrace();
+			//System.out.println(ex.getMessage());
 			System.exit(1);
 		}
-		int source = 1;
-		int dest = 6;
+		
+		int source = Integer.parseInt(Args[2]);
+		int dest = Integer.parseInt(Args[3]);
 		int minDist = -1;
-		//Create Routing table for every node... is this O(n^2)??? 
+		
+		
+		
 		for(int i=0;i<graph.getNumVetices();i++){	
-			Map.Entry<Integer[], Integer[]> e = SSP.Dijkstra(graph, i+"");
+			Map.Entry<Integer[], Integer[]> e = ssp.Dijkstra(graph, i+"");
 			Integer[] dist = e.getKey();
 			Integer[] prev = e.getValue();
  			for(int j=0;j<graph.getNumVetices();j++){	
 	 			if(i != j){	
+	 				
 	 				Integer Inx = j;
 	 				while(!prev[Inx].equals(graph.getSource())){
 	 					Inx = prev[Inx];
 	 				}
-	 				
-	 				//System.out.println(j+" - "+Inx);
-	 				
+	 				 				
 	 				try{
-	 					graph.addEntryRoutingTable(i, ips.get(j), Inx);
+	 					graph.addEntryRoutingTable(i, j, Inx);
 	 				}catch(Exception ex){
 	 					//System.out.println(ex.getMessage());
 	 					ex.printStackTrace();
@@ -61,11 +66,11 @@ public class Routing {
 		//simulate network sending packet from source to destination
 		
 		System.out.println(minDist);
-		String path = "";
+		
 		Integer node = source;
 		while(node != dest){
 			//System.out.print(node);
-			Map.Entry<Integer, String> e  = graph.getNextHub(node, ips.get(dest));
+			Map.Entry<Integer, String> e  = graph.getNextHub(node, dest);
 			System.out.print(e.getValue()+" ");
 			node = e.getKey();
 		}
@@ -85,24 +90,36 @@ public class Routing {
 		return ip;
 	}
 	
-	public static Map<Integer, String> loadIps(String path) throws Exception{
+	public static void loadIps(Graph g, String path) throws Exception{
 		
-		FileInputStream fstream = new FileInputStream(path);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-		Map<Integer, String> ips = new HashMap<Integer, String>();
-		String strLine;
-	
-		int label = 0;
-		while ((strLine = br.readLine()) != null)   {
-			String binary = normalizeIp(ipToBinary(strLine));
-			ips.put(label, binary);
-			//System.out.println(binary);
-			label += 1;	
-			br.readLine();
-		}
-		//Close the input stream
-		br.close();
-		return ips;
+
+		File file = new File(path);
+	    Scanner sc = new Scanner(file);
+	    int label = 0;
+	    while (sc.hasNextLine()) {
+	    	String binary = normalizeIp(ipToBinary(sc.next()));
+			g.getNode(label).setIp(binary);
+			label += 1;		
+	    }
+	    
+	    sc.close();
+	 
+		
+//		FileInputStream fstream = new FileInputStream(path);
+//		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+//		Map<Integer, String> ips = new HashMap<Integer, String>();
+//		String strLine;
+//	
+//		int label = 0;
+//		while ((strLine = br.readLine()) != null)   {
+//			String binary = normalizeIp(ipToBinary(strLine));
+//			ips.put(label, binary);
+//			label += 1;	
+//			br.readLine();
+//		}
+//		//Close the input stream
+//		br.close();
+//		return ips;
 	}
 	
 	public static String ipToBinary(String ip) throws Exception{
